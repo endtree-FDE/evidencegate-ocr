@@ -68,3 +68,32 @@ Return the gate state first, followed by:
 4. required human action;
 5. input/output counts, timing, failures, and corrections;
 6. what the result does not prove.
+
+## Feishu group assistant (mimi) routing language
+
+When this skill runs inside a Feishu group assistant (mimi), map each gate state
+to the reply language below. Never soften a `HUMAN_REVIEW` into a confident answer.
+
+- `ACCEPT_CANDIDATE` → state each field together with its evidence location
+  (e.g. “金额 ¥1,234 —— 证据：票面右下角第 3 行”), and remind that a human still
+  confirms before any write action.
+- `HUMAN_REVIEW` → list the missing, cropped, obstructed, or conflicting fields
+  verbatim, state exactly what is uncertain, and ask for a clearer image or a
+  human decision. Do not fill cropped or obscured values from context or
+  neighboring systems.
+- `MODEL_OUTPUT_INVALID` → say the read failed plainly, ask to resend, and never
+  answer with partial guesses.
+
+Integration rules for mimi:
+
+- Run the gate before the assistant answers questions about ticket, invoice,
+  receipt, or document-attachment images.
+- Inject the gate result into the assistant context; the assistant must quote
+  the route and the evidence references, not paraphrase them away.
+- Record the gate output into the group audit log (mimi already keeps one).
+- A write proposal (mimi's propose-then-confirm flow) whose source data came
+  from OCR must be downgraded to “human look first” whenever the gate returned
+  `HUMAN_REVIEW` or `MODEL_OUTPUT_INVALID`.
+- The skill never writes to Feishu on its own; writes remain behind mimi's
+  existing confirmation flow.
+
