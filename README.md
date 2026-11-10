@@ -25,6 +25,10 @@ flowchart LR
 
 The gate contract is provider-independent. Alibaba Cloud Model Studio is the live location example in v0.4.0.
 
+### Production adoption
+
+[mimi-agent](https://github.com/endtree-FDE/mimi-agent) v0.13.0 embeds the gate as a read-only tool (`evidencegate_check`) with dual-gate coupling: write-proposal gating prefers the evidence state from the most recent `evidencegate_check` route. The gate stays model-free (the host brings its own model layer). Shipped example configs keep it default-off.
+
 ## Road to v0.5.0
 
 The public stable release is `v0.4.1`. A `v0.5.0-rc1` tag will require an independent, host-agnostic blind evaluation rather than another score produced by the implementation team.
